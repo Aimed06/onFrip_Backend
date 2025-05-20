@@ -12,6 +12,7 @@ export class UserService {
         const users = await User.find();
         return users;
     }
+    
 
     public static async findOne(id: number): Promise<User | null> {
         const user = await User.findOneBy({ id: id });

@@ -33,10 +33,10 @@ export class ProductsController {
         try {
             // const user = req.locals.user;
             // console.log("ee",user);
-            // if (user.role != UserRole.VENDOR) throw new HttpErrors.Forbidden("Only vendors can create products");
             const { name, price, category } = req.body;
             const image = req.file?.filename;
             const user = res.locals.user;
+            if (user.role != UserRole.VENDOR) throw new HttpErrors.Forbidden("Only vendors can create products");
             if (!user) throw new HttpErrors.NotFound(`User with id ${user.id} not found`);
 
             if (!name) throw new HttpErrors.BadRequest("Name is required");

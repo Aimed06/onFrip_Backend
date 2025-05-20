@@ -3,6 +3,7 @@ import {ProductsController} from "../controllers/products.controller";
 import { favoritesController } from "../controllers/favorites.controller";
 import upload from "../../config/multer";
 import { UserGuard } from "../Middlewares/UserGuard";
+import { basketsController } from "../controllers/basket.controller";
 const router = Router();
 
 
@@ -15,7 +16,14 @@ router.delete("/:id/user", UserGuard, ProductsController.deleteUserProduct);
 
 router.get ("/favorites", UserGuard, favoritesController.getUserFavorites);
 router.get("/:id/favorites", UserGuard, favoritesController.create);
-router.delete("/:id/favorites", UserGuard, favoritesController.delete); 
+router.delete("/:id/favorites", UserGuard, favoritesController.delete);
+
+router.get("/basket", UserGuard, basketsController.getUserBaskets);
+router.get("/:id/basket", UserGuard, basketsController.create);
+router.delete("/basket", UserGuard, basketsController.deleteAll);
+router.delete("/basket/:id", UserGuard, basketsController.delete);
+
+
 
 
 // Get product by ID

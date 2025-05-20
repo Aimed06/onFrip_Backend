@@ -1,5 +1,20 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, Unique, OneToMany, ManyToOne, JoinColumn, ManyToMany, JoinTable } from "typeorm";
-import { IsBoolean, IsEmail, IsNumber, IsPositive, Length } from "class-validator";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  BaseEntity,
+  ManyToOne,
+  JoinColumn,
+  ManyToMany,
+  JoinTable,
+} from "typeorm";
+import {
+  IsBoolean,
+  IsEmail,
+  IsNumber,
+  IsPositive,
+  Length,
+} from "class-validator";
 import { User } from "./User.entity";
 import { Product } from "./Product.entity";
 
@@ -8,11 +23,6 @@ export enum orderStatus {
   CONFIRMED = 1,
   REFUSED = 2,
   CANCELED = 3,
-}
-
-export enum paymentMethod {
-  ONLINE = "ONLINE",
-  CASH = "CASH",
 }
 
 @Entity("orders")
@@ -28,32 +38,35 @@ export class Order extends BaseEntity {
     default: () => "CURRENT_TIMESTAMP",
     name: 'created_at'
   })
-  createdAt!: Date
-
+  createdAt!: Date;
 
   @Column({ default: 0 })
   @IsNumber()
   @IsPositive()
-  price!: number
+  price!: number;
 
   @Column({ default: false })
   @IsBoolean()
-  isPaid!: boolean
-
-  @Column({ type: 'enum', enum: paymentMethod, default: paymentMethod.CASH })
-  paymentMethod!: string
+  isPaid!: boolean;
 
   @ManyToOne(() => User, (user) => user.orders, { nullable: false })
   @JoinColumn({ name: 'user_id' })
-  user!: User
+  user!: User;
 
   @Column()
   user_id!: number;
 
-  @ManyToOne(() => Product ,{ onDelete: "CASCADE", nullable: false })
-  product!: Product
-
-  
-
-
+  @ManyToMany(() => Product)
+  @JoinTable({
+    name: "order_products", // table de jointure
+    joinColumn: {
+      name: "order_id",
+      referencedColumnName: "id",
+    },
+    inverseJoinColumn: {
+      name: "product_id",
+      referencedColumnName: "id",
+    },
+  })
+  products!: Product[];
 }

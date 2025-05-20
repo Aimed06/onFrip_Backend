@@ -8,6 +8,11 @@ import {
 import { Category } from "./Category.entity";
 import { Notification } from "./Notification.entity";
 import { Order } from "./Order.entity";
+
+export enum ProductStatus {
+  SOLD = 1,
+  AVAILABLE = 0,
+}
   
   @Entity("products")
   export class Product extends BaseEntity {
@@ -23,7 +28,10 @@ import { Order } from "./Order.entity";
   
     @Column()
     image!: string;
-  
+
+    @Column({type: "enum", enum: ProductStatus, default: ProductStatus.AVAILABLE})
+    status!: ProductStatus;
+
     @ManyToOne(() => User, (user) => user.products, { onDelete: "CASCADE" })
     seller!: User;
 
@@ -36,7 +44,6 @@ import { Order } from "./Order.entity";
    @ManyToMany(() => User, (user) => user.favoriteProducts)
   favoriteUsers!: User[];
 
-  @OneToMany (() => Order, (order) => order.product)
-  orders!: Order[];
+
   }
   

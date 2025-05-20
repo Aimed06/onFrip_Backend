@@ -1,4 +1,5 @@
-import { Product } from "../entities/Product.entity";
+import { Not } from "typeorm";
+import { Product, ProductStatus } from "../entities/Product.entity";
 import { User } from "../entities/User.entity";
 import { CreateProductCommand } from "../services/commands/CreateProductCommand";
 import { UpdateProductCommand } from "../services/commands/UpdateProductCommand";
@@ -6,7 +7,9 @@ import { UpdateProductCommand } from "../services/commands/UpdateProductCommand"
 export class ProductService {
   public static async findAll(): Promise<Product[]> {
     const products = await Product.find({
-      relations: ["seller"]}) // Include seller and category relations);
+      relations: ["seller"], where : { status: Not(ProductStatus.SOLD) } // Only get available products
+      })
+       // Include seller and category relations);
     return products;
   }
 
@@ -68,6 +71,19 @@ export class ProductService {
     });
     return products;
   }
+
+  public static async isProductOwned (userId:number, productId:number): Promise<Boolean>
+    {
+      try{
+        const ownedProduct=  await Product.findOne({
+      where: { id:productId,  seller: { id: userId } },
+     });
+     return !!ownedProduct;
+      }catch (error) {
+        console.error("Error checking product ownership:", error);
+        return false;
+      }
+    }
 
   public static async deleteUserProduct(id: number, userId: number): Promise<Product | null> {
     const product = await Product.findOne({
